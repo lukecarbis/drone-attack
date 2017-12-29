@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <!-- <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script> -->
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v3.13.1/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.js"></script>
+</head>
+  <body>
+    <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      var laserActive = false,
+          laser = document.querySelector('#laser'),
+          laserSpark = document.querySelector('#laser-spark'),
+          laserSound = document.querySelector('#laser-sound'),
+          laserSpark = document.querySelector('#laser-spark'),
+          camera = document.querySelector('a-camera'),
+          cursor = document.querySelector('a-cursor');
+
+      AFRAME.registerComponent('move-on-click', {
+        init: function () {
+          this.el.addEventListener('click', function () {
+            var positionAnimation = document.createElement("a-animation"),
+                rotationAnimation = document.createElement("a-animation"),
+                position = [
+                  Math.floor((Math.random() * 20)+1-10),
+                  Math.floor((Math.random() * 3)+3),
+                  Math.floor((Math.random() * 20)+1-10)
+                ],
+                rotation = [
+                  0,
+                  Math.floor((Math.random() * 360)+1),
+                  0
+                ];
+
+            positionAnimation.setAttribute('attribute','position');
+            positionAnimation.setAttribute('to',position.join(' '));
+            positionAnimation.setAttribute('dur',2000);
+            rotationAnimation.setAttribute('attribute','rotation');
+            rotationAnimation.setAttribute('to',rotation.join(' '));
+            rotationAnimation.setAttribute('dur',3500);
+
+            this.appendChild(positionAnimation);
+            this.appendChild(rotationAnimation);
+          });
+
+          // Clean up animation events once they've finished
+          this.el.addEventListener('animationend', function(e) {
+            e.target.outerHTML = '';
+          });
+
+          this.el.addEventListener('fusing', function(e) {
+            var light = document.querySelector('#red-light');
+            light.setAttribute('target', '#' + this.getAttribute('id'));
+            light.setAttribute('intensity',1);
+          });
+
+          this.el.addEventListener('mouseleave', function() {
+            var light = document.querySelector('#red-light');
+            light.setAttribute('intensity',0);
+          });
+        }
+      });
+
+      AFRAME.registerComponent('cursor-listener', {
+        init: function () {
+          this.el.addEventListener('mouseenter', function (e) {
+            var sparkSound = e.target.querySelector('.drone-spark');
+
+            laserActive = true;
+
+            laserSpark.setAttribute('particle-system', 'enabled:true');
+            laser.setAttribute('visible', true);
+
+            laserSound.components.sound.playSound();
+            sparkSound.components.sound.playSound();
+          });
+
+          this.el.addEventListener('mouseleave', function (e) {
+            var sparkSound = e.target.querySelector('.drone-spark');
+
+            laserActive = false;
+
+            laser.setAttribute('visible', false);
+            laserSpark.setAttribute('particle-system', 'enabled:false');
+
+            laserSound.components.sound.stopSound();
+            sparkSound.components.sound.stopSound();
+          });
+        },
+        tick: function(e){
+          if (laserActive) {
+            var startPos = new THREE.Vector3();
+            startPos.setFromMatrixPosition(camera.object3D.matrixWorld);
+            startPos.y -= 0.05;
+
+            var endPos = new THREE.Vector3();
+            endPos.setFromMatrixPosition(cursor.components.raycaster.intersectedEls[0].object3D.matrixWorld);
+
+            laser.setAttribute('line', 'start', startPos)
+            laser.setAttribute('line', 'end', endPos)
+
+            laserSpark.setAttribute('position', endPos);
+          }
+        }
+      });
+    });
+    </script>
+    </div>
+    <a-scene>
+      <!-- Assets -->
+      <a-assets>
+        <a-asset-item id="drone-model" src="/models/drone/busterDrone.gltf"></a-asset-item>
+        <img id="floor" src="/images/floor.jpg">
+        <img id="sky" src="/images/sky.jpg">
+        <audio id="drone-buzz" src="/sounds/buzz.wav"></a-asset-item>
+        <audio id="drone-spark" src="/sounds/spark.wav"></a-asset-item>
+        <audio id="laser-beam" src="/sounds/beam.wav"></a-asset-item>
+      </a-assets>
+
+      <!-- Drones -->
+      <a-entity class="drone" id="drone-front" position="0 5 -6" move-on-click cursor-listener>
+        <a-entity gltf-model="#drone-model" animation-mixer="clip:busterDrone; loop:pingpong; crossFadeDuration: 1; duration: 30" position="0 0 0">
+          <a-animation attribute="position" to="0 0.5 0" direction="alternate" dur="2000" repeat="indefinite"></a-animation>
+          <a-sound class="drone-buzz" src="#drone-buzz" autoplay="true" position="0 0 0" loop="true" volume="0.25"></a-sound>
+          <a-sound class="drone-spark" src="#drone-spark" autoplay="false" position="0 0 0" loop="true"></a-sound>
+        </a-entity>
+      </a-entity>
+
+      <a-entity class="drone" id="drone-left" position="6 5 0" move-on-click cursor-listener>
+        <a-entity gltf-model="#drone-model" animation-mixer="clip:busterDrone; loop:pingpong; crossFadeDuration: 1; duration: 45" position="0 0 0">
+          <a-animation attribute="position" to="0 0.5 0" direction="alternate" dur="2500" repeat="indefinite"></a-animation>
+          <a-sound class="drone-buzz" src="#drone-buzz" autoplay="true" position="0 0 0" loop="true" volume="0.25"></a-sound>
+          <a-sound class="drone-spark" src="#drone-spark" autoplay="false" position="0 0 0" loop="true"></a-sound>
+        </a-entity>
+      </a-entity>
+
+      <a-entity class="drone" id="drone-right" position="-6 5 0" move-on-click cursor-listener>
+        <a-entity gltf-model="#drone-model" animation-mixer="clip:busterDrone; loop:pingpong; crossFadeDuration: 1; duration: 60" position="0 0 0">
+          <a-animation attribute="position" to="0 0.5 0" direction="alternate" dur="1500" repeat="indefinite"></a-animation>
+          <a-sound class="drone-buzz" src="#drone-buzz" autoplay="true" position="0 0 0" loop="true" volume="0.25"></a-sound>
+          <a-sound class="drone-spark" src="#drone-spark" autoplay="false" position="0 0 0" loop="true"></a-sound>
+        </a-entity>
+      </a-entity>
+
+      <!-- Environment -->
+      <!-- <a-entity environment="preset: contact; seed: 42; dressingAmount: 20;"></a-entity> -->
+      <a-cylinder src="#floor" radius="32" height="0.1"></a-cylinder>
+      <a-sky src="#sky" theta-length="90" radius="30"></a-sky>
+
+      <!-- Lighting -->
+      <a-light type="spot" intensity="0" decay="0" penumbra="1" color="red" id="red-light"></a-light>
+      <a-light type="ambient" intensity="1"></a-light>
+      <a-entity id="laser-spark" position="0 0 0" particle-system="enabled: false; positionSpread: 0 0 0; velocityValue: 0 1 0; particleCount: 250; texture: /images/smoke.png; color: #f7ac43,#f06722; maxAge: 0.2; type: 2; size: 0.2;"></a-entity>
+
+      <!-- Laser -->
+      <!--
+      This is too slow.
+      <script src="https://unpkg.com/aframe-curve-component/dist/aframe-curve-component.min.js"></script>
+      <a-curve id="laser-curve">
+          <a-curve-point id="laser-curve-start" position="0 0 0"></a-curve-point>
+          <a-curve-point id="laser-curve-end" position="1 1 1"></a-curve-point>
+      </a-curve>
+      <a-entity id="laser" visible="false" clone-along-curve="curve: #laser-curve; scale: 0.001 10 0.001; rotation: 90 0 0;" material="color:#A00; opacity:0.75" geometry="primitive:cylinder;"></a-entity>
+      -->
+      <a-entity id="laser" visible="false" line="start: 0, 0, 0; end: 0 0 0; color: red"></a-entity>
+      <a-sound id="laser-sound" src="#laser-beam" autoplay="false" position="0 0 0" loop="true"></a-sound>
+
+      <!-- Camera / Cursor -->
+      <a-camera>
+        <a-cursor material="color: white; shader: flat" raycaster="objects: .drone" fuse="true" fuseTimeout="1000"></a-cursor>
+      </a-camera>
+    </a-scene>
+  </body>
+</html>
