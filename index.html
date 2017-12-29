@@ -109,12 +109,12 @@
     <a-scene>
       <!-- Assets -->
       <a-assets>
-        <a-asset-item id="drone-model" src="/models/drone/busterDrone.gltf"></a-asset-item>
-        <img id="floor" src="/images/floor.jpg">
-        <img id="sky" src="/images/sky.jpg">
-        <audio id="drone-buzz" src="/sounds/buzz.wav"></a-asset-item>
-        <audio id="drone-spark" src="/sounds/spark.wav"></a-asset-item>
-        <audio id="laser-beam" src="/sounds/beam.wav"></a-asset-item>
+        <a-asset-item id="drone-model" src="models/drone/busterDrone.gltf"></a-asset-item>
+        <img id="floor" src="images/floor.jpg">
+        <img id="sky" src="images/sky.jpg">
+        <audio id="drone-buzz" src="sounds/buzz.wav"></a-asset-item>
+        <audio id="drone-spark" src="sounds/spark.wav"></a-asset-item>
+        <audio id="laser-beam" src="sounds/beam.wav"></a-asset-item>
       </a-assets>
 
       <!-- Drones -->
@@ -150,7 +150,7 @@
       <!-- Lighting -->
       <a-light type="spot" intensity="0" decay="0" penumbra="1" color="red" id="red-light"></a-light>
       <a-light type="ambient" intensity="1"></a-light>
-      <a-entity id="laser-spark" position="0 0 0" particle-system="enabled: false; positionSpread: 0 0 0; velocityValue: 0 1 0; particleCount: 250; texture: /images/smoke.png; color: #f7ac43,#f06722; maxAge: 0.2; type: 2; size: 0.2;"></a-entity>
+      <a-entity id="laser-spark" position="0 0 0" particle-system="enabled: false; positionSpread: 0 0 0; velocityValue: 0 1 0; particleCount: 250; texture: images/smoke.png; color: #f7ac43,#f06722; maxAge: 0.2; type: 2; size: 0.2;"></a-entity>
 
       <!-- Laser -->
       <!--
