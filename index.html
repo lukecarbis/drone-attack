@@ -1,7 +1,7 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
-    <!-- <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script> -->
+    <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
     <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v3.13.1/dist/aframe-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.js"></script>
 </head>
@@ -143,9 +143,9 @@
       </a-entity>
 
       <!-- Environment -->
-      <!-- <a-entity environment="preset: contact; seed: 42; dressingAmount: 20;"></a-entity> -->
-      <a-cylinder src="#floor" radius="32" height="0.1"></a-cylinder>
-      <a-sky src="#sky" theta-length="90" radius="30"></a-sky>
+      <!-- fog: 0; is required due to a problem with the particle system component. -->
+      <!-- @see https://github.com/IdeaSpaceVR/aframe-particle-system-component/issues/26 -->
+      <a-entity environment="preset: contact; seed: 42; dressingAmount: 20; fog: 0;"></a-entity>
 
       <!-- Lighting -->
       <a-light type="spot" intensity="0" decay="0" penumbra="1" color="red" id="red-light"></a-light>
