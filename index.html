@@ -89,12 +89,14 @@
         },
         tick: function(e){
           if (laserActive) {
-            var startPos = new THREE.Vector3();
+            var startPos = new THREE.Vector3(),
+                endPos = new THREE.Vector3(),
+                drone = cursor.components.raycaster.intersectedEls[0].querySelector('a-entity');
+
             startPos.setFromMatrixPosition(camera.object3D.matrixWorld);
             startPos.y -= 0.05;
 
-            var endPos = new THREE.Vector3();
-            endPos.setFromMatrixPosition(cursor.components.raycaster.intersectedEls[0].object3D.matrixWorld);
+            endPos.setFromMatrixPosition(drone.object3D.matrixWorld);
 
             laser.setAttribute('line', 'start', startPos)
             laser.setAttribute('line', 'end', endPos)
